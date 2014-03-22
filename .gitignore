@@ -1,0 +1,12 @@
+bin
+obj
+TestResults
+test-results
+.metadata
+*.class
+*.settings
+local.properties
+*.userprefs
+.DS_Store
+*.user
+*.suo
