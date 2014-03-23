@@ -2,6 +2,7 @@
 <package >
   <metadata>
     <id>XamGuard</id>
+    <title>XamGuard - Proguard for Xamarin.Android</title>
     <version>1.0.0</version>
     <authors>Mart Roosmaa</authors>
     <owners>Mart Roosmaa</owners>
