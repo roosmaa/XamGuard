@@ -47,6 +47,11 @@ In short, you **should** always test your release builds before giving them to y
 To build XamGuard from source you need to open the solution and build in Release mode. After that you should move the files from `Proguard.Build.Tasks/bin/Release/` to your solution folder where your Android project can import the `Proguard.target`. That's it.
 
 
+## Contributing
+
+All contributions are more than welcome. Fork the code, add your changes and create a pull request. The usual Github workflow. :)
+
+
 ## License
 
 XamGuard is licensed under [MIT license](https://github.com/roosmaa/XamGuard/blob/master/LICENSE).
