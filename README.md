@@ -14,7 +14,7 @@ For example, the JAR file for Google Play Services is around 1.4M. If you only u
 
 ## Give it to me now!
 
-The easies way to get the binaries is to look for XamGuard in your NuGet package manager.
+The easies way to get the binaries is to look for [XamGuard](https://www.nuget.org/packages/XamGuard/) in your NuGet package manager.
 
 After getting the binaries, the first thing you need to do is to add a line to your Android .csproj file. This line imports the new build steps to run Proguard. You need to add if _after_ the line importing `Novell.MonoDroid.CSharp.targets`. Like so:
 
