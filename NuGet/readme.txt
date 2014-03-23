@@ -7,6 +7,4 @@ Like so:
 
 Make sure to double check that the new line is below the other Import and that the path to your NuGet packages folder is correct.
 
-Now you need to customize the Proguard.cfg file (which was added to your project). Go ahead, take a look at it, there are helpful comments on what to fill out.
-
-After everything is set-up when you build your app in Release mode the unused Java code will be stripped as well as the IL code. But be sure to test your release builds before uploading them to Google Play as Proguard might have stripped something that your app needs and then you need to manually manage it via the Proguard.cfg file.
+Now every time you build your app in Release mode the unused Java code will be stripped as well as the IL code. But be sure to test your release builds before uploading them to Google Play as Proguard might have stripped something that your app needs and then you need to manually manage it via the Proguard.cfg file (which was added to your project).

@@ -96,10 +96,16 @@ namespace BitterFudge.Proguard.Build.Tasks
 
             // Generate Proguard configuration
             using (var sw = new StreamWriter (Config)) {
-                // Keep all mono java:
-                sw.WriteLine ("-keep class mono.android.** { *; }");
+                // Keep all generated resource files:
+                sw.WriteLine ("-keepclassmembers class **.R$* {");
+                sw.WriteLine ("\tpublic static <fields>;");
+                sw.WriteLine ("}");
 
-                // Java via bindings:
+                // Keep all mono java & ACWs:
+                sw.WriteLine ("-keep class mono.** { *; }");
+                sw.WriteLine ("-keep class * implements mono.android.IGCUserPeer { *; }");
+
+                // Keep Java used by bindings:
                 foreach (var t in types) {
                     sw.Write ("-keep class {0}", t);
 
