@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace BitterFudge.Proguard.Build
 {
@@ -9,8 +8,15 @@ namespace BitterFudge.Proguard.Build
 
         static OS ()
         {
-            IsWindows = Path.PathSeparator == '\\';
+            switch (Environment.OSVersion.Platform) {
+            case PlatformID.Unix:
+            case PlatformID.MacOSX:
+                IsWindows = false;
+                break;
+            default:
+                IsWindows = true;
+                break;
+            }
         }
     }
 }
-
