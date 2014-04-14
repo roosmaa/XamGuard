@@ -128,8 +128,8 @@ namespace BitterFudge.Proguard.Build
 
             var type = Parse (e);
             if (name == null)
-                return type;
-            return String.Concat (type, " ", name);
+                return String.Concat (type, "[]");
+            return String.Concat (type, "[] ", name);
         }
 
         string ParseClass (CharEnumerator e, string name = null)
