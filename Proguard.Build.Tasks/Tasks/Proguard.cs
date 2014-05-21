@@ -47,6 +47,13 @@ namespace BitterFudge.Proguard.Build.Tasks
 
         public override bool Execute ()
         {
+            string proGuardHome = Environment.GetEnvironmentVariable("PROGUARD_HOME");
+            if (string.IsNullOrEmpty(proGuardHome))
+            {
+                proGuardHome = Directory.GetParent(ToolPath).Name;
+                this.EnvironmentVariables = new string[] {string.Format(@"PROGUARD_HOME={0}", proGuardHome)};
+            }
+
             Config = Path.GetTempFileName ();
             try {
                 GenerateConfiguration ();
