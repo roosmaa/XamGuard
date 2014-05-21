@@ -28,6 +28,8 @@ namespace BitterFudge.Proguard.Build.Tasks
         [Required]
         public string MainAssembly { get; set; }
 
+        public ITaskItem[] LibraryProjects { get; set; }
+
         public ITaskItem[] AdditionalLibraries { get; set; }
 
         public string UserConfig { get; set; }
@@ -76,6 +78,7 @@ namespace BitterFudge.Proguard.Build.Tasks
             }
 
             builder.AppendSwitchIfNotNull ("-injars ", CompiledJavaDirectory);
+            builder.AppendSwitchIfNotNull ("-injars ", LibraryProjects, ":");
             builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, ":");
             builder.AppendSwitchIfNotNull ("-libraryjars ", JavaPlatformJarPath);
             builder.AppendSwitchIfNotNull ("-libraryjars ", monoPlatformJarPath);
