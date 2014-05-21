@@ -3,7 +3,7 @@ To include XamGuard into your Xamarin.Android application build process, you nee
 Like so:
 
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
-  <Import Project="..\packages\XamGuard.1.0.0\Proguard.targets" Condition="'$(Configuration)' != 'Debug'" />
+  <Import Project="..\packages\XamGuard.1.0.1\Proguard.targets" Condition="'$(Configuration)' != 'Debug'" />
 
 Make sure to double check that the new line is below the other Import and that the path to your NuGet packages folder is correct.
 

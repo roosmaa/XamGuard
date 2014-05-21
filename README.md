@@ -20,7 +20,7 @@ After getting the binaries, the first thing you need to do is to add a line to y
 
 ```xml
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
-  <Import Project="..\packages\XamGuard.1.0.0\Proguard.targets" Condition="'$(Configuration)' != 'Debug'" />
+  <Import Project="..\packages\XamGuard.1.0.1\Proguard.targets" Condition="'$(Configuration)' != 'Debug'" />
 ```
 
 You should double check that the path to Proguard.targets file is correct. The next step is to configure Proguard.
