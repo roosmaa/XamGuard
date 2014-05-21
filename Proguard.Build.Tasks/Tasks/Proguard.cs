@@ -47,6 +47,13 @@ namespace BitterFudge.Proguard.Build.Tasks
 
         public override bool Execute ()
         {
+            string proGuardHome = Environment.GetEnvironmentVariable("PROGUARD_HOME");
+            if (string.IsNullOrEmpty(proGuardHome))
+            {
+                proGuardHome = Directory.GetParent(ToolPath).Name;
+                this.EnvironmentVariables = new string[] {string.Format(@"PROGUARD_HOME={0}", proGuardHome)};
+            }
+
             Config = Path.GetTempFileName ();
             try {
                 GenerateConfiguration ();
@@ -60,10 +67,18 @@ namespace BitterFudge.Proguard.Build.Tasks
         protected override string GenerateCommandLineCommands ()
         {
             var builder = new CommandLineBuilder ();
+
+            var monoPlatformJarPath = MonoPlatformJarPath;
+            if (OS.IsWindows)
+            {
+                // Escape paths that have spaces or parentheticals.
+                monoPlatformJarPath = "\"" + MonoPlatformJarPath + "\"";
+            }
+
             builder.AppendSwitchIfNotNull ("-injars ", CompiledJavaDirectory);
             builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, ":");
             builder.AppendSwitchIfNotNull ("-libraryjars ", JavaPlatformJarPath);
-            builder.AppendSwitchIfNotNull ("-libraryjars ", MonoPlatformJarPath);
+            builder.AppendSwitchIfNotNull ("-libraryjars ", monoPlatformJarPath);
             builder.AppendSwitchIfNotNull ("-outjar ", OutputDirectory);
             builder.AppendSwitchIfNotNull ("-include ", Config);
             if (File.Exists (UserConfig)) {
