@@ -32,6 +32,8 @@ namespace BitterFudge.Proguard.Build.Tasks
 
         public ITaskItem[] AdditionalLibraries { get; set; }
 
+        public string Config { get; set; }
+
         public string UserConfig { get; set; }
 
         protected override string GenerateFullPathToTool ()
@@ -45,8 +47,6 @@ namespace BitterFudge.Proguard.Build.Tasks
             }
         }
 
-        private string Config { get; set; }
-
         public override bool Execute ()
         {
             string proGuardHome = Environment.GetEnvironmentVariable("PROGUARD_HOME");
@@ -56,14 +56,9 @@ namespace BitterFudge.Proguard.Build.Tasks
                 this.EnvironmentVariables = new string[] {string.Format(@"PROGUARD_HOME={0}", proGuardHome)};
             }
 
-            Config = Path.GetTempFileName ();
-            try {
-                GenerateConfiguration ();
+            GenerateConfiguration ();
 
-                return base.Execute ();
-            } finally {
-                File.Delete (Config);
-            }
+            return base.Execute ();
         }
 
         protected override string GenerateCommandLineCommands ()

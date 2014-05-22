@@ -20,6 +20,7 @@
     AdditionalLibraries="@(_AdditionalJavaLibraryReferences)"
     LibraryProjects="@(_ProguardLibraryJars)"
     ToolPath="$(_AndroidSdkDirectory)tools\proguard\bin"
+    Config="$(IntermediateOutputPath)proguard-generated.cfg"
     UserConfig="Proguard.cfg" />
 </Target>
 
