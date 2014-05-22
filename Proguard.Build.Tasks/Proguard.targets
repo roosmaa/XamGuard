@@ -1,15 +1,8 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 <UsingTask TaskName="BitterFudge.Proguard.Build.Tasks.Proguard" AssemblyFile="Proguard.Build.Tasks.dll" />
 
-<Target Name="_FindProguardLibraryProjectsJars"
-  DependsOnTargets="_GetLibraryImports">
-  <ItemGroup>
-    <_ProguardLibraryJars Include="$(IntermediateOutputPath)__library_projects__\*.jar" />
-  </ItemGroup>
-</Target>
-
 <Target Name="_RunProguard"
-  DependsOnTargets="_CompileJava;_GetMonoPlatformJarPath;_FindProguardLibraryProjectsJars">
+  DependsOnTargets="_CompileJava;_GetMonoPlatformJarPath">
   <Proguard
     JavaPlatformJarPath="$(JavaPlatformJarPath)"
     MonoPlatformJarPath="$(MonoPlatformJarPath)"
@@ -18,31 +11,22 @@
     AndroidIntermediateAssetsDir="$(MonoAndroidIntermediateAssetsDir)"
     MainAssembly="$(MonoAndroidIntermediateAssetsDir)$(TargetFileName)"
     AdditionalLibraries="@(_AdditionalJavaLibraryReferences)"
-    LibraryProjects="@(_ProguardLibraryJars)"
+    LibraryProjectsDirectory="$(IntermediateOutputPath)__library_projects__"
     ToolPath="$(_AndroidSdkDirectory)tools\proguard\bin"
     Config="$(IntermediateOutputPath)proguard-generated.cfg"
     UserConfig="Proguard.cfg" />
 </Target>
 
-<Target Name="_CopyProguardLibraryProjects"
-  DependsOnTargets="_RunProguard;_FindProguardLibraryProjectsJars"
-  Condition="@(_ProguardLibraryJars) != ''">
-  <Copy
-    SourceFiles="@(_ProguardLibraryJars->'$(IntermediateOutputPath)android\proguard\%(Filename)%(Extension)')"
-    DestinationFolder="$(IntermediateOutputPath)__library_projects__" />
-  <Delete Files="@(_ProguardLibraryJars->'$(IntermediateOutputPath)android\proguard\%(Filename)%(Extension)')" />
-</Target>
-
-<Target Name="_FindCompiledJavaFiles" DependsOnTargets="_CompileJava;_RunProguard;_CopyProguardLibraryProjects">
+<Target Name="_FindCompiledJavaFiles" DependsOnTargets="_CompileJava;_RunProguard">
   <CreateItem
-    Include="$(IntermediateOutputPath)android\proguard\\**\*.class">
+    Include="$(IntermediateOutputPath)android\proguard\java\\**\*.class">
     <Output TaskParameter="Include" ItemName="_CompiledJavaFiles" />
   </CreateItem>
   <ItemGroup>
    <_AdditionalJavaLibraryReferences Remove="@(_AdditionalJavaLibraryReferences)"/>
   </ItemGroup>
   <CreateItem
-    Include="$(IntermediateOutputPath)android\proguard\*.jar">
+    Include="$(IntermediateOutputPath)android\proguard\additional\*.jar">
     <Output TaskParameter="Include" ItemName="_AdditionalJavaLibraryReferences" />
   </CreateItem>
 </Target>

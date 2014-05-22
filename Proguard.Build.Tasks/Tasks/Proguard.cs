@@ -28,7 +28,7 @@ namespace BitterFudge.Proguard.Build.Tasks
         [Required]
         public string MainAssembly { get; set; }
 
-        public ITaskItem[] LibraryProjects { get; set; }
+        public string LibraryProjectsDirectory { get; set; }
 
         public ITaskItem[] AdditionalLibraries { get; set; }
 
@@ -47,6 +47,14 @@ namespace BitterFudge.Proguard.Build.Tasks
             }
         }
 
+        private string JavaOutputDirectory { get; set; }
+
+        private string AdditionalLibrariesOutputDirectory { get; set; }
+
+        private string LibraryProjectsOutputDirectory { get; set; }
+
+        private string LibraryProjectsTempDirectory { get; set; }
+
         public override bool Execute ()
         {
             string proGuardHome = Environment.GetEnvironmentVariable("PROGUARD_HOME");
@@ -56,9 +64,71 @@ namespace BitterFudge.Proguard.Build.Tasks
                 this.EnvironmentVariables = new string[] {string.Format(@"PROGUARD_HOME={0}", proGuardHome)};
             }
 
-            GenerateConfiguration ();
+            // Prepare paths
+            JavaOutputDirectory = Path.Combine (OutputDirectory, "java");
+            AdditionalLibrariesOutputDirectory = Path.Combine (OutputDirectory, "additional");
+            LibraryProjectsOutputDirectory = Path.Combine (OutputDirectory, "library_projects");
+            var tempDirectory = Path.Combine (OutputDirectory, "tmp");
+            LibraryProjectsTempDirectory = Path.Combine (tempDirectory, "library_projects");
 
-            return base.Execute ();
+            MoveFiles (LibraryProjectsDirectory, "*.jar", SearchOption.TopDirectoryOnly, LibraryProjectsTempDirectory, "library project jar");
+            GenerateConfiguration ();
+            var success = base.Execute ();
+
+            if (success) {
+                CopyFiles (LibraryProjectsOutputDirectory, "*.jar", SearchOption.AllDirectories, LibraryProjectsDirectory, "processed library project jar");
+            }
+
+            return success;
+        }
+
+        private void MoveFiles (string sourceDirectory, string searchPattern, SearchOption searchOption, string destDirectory, string fileDescription)
+        {
+            if (Directory.Exists (destDirectory))
+                Directory.Delete (destDirectory, true);
+
+            var files = Directory.GetFiles (sourceDirectory, searchPattern, searchOption);
+            if (files.Length < 1)
+                return;
+
+            foreach (var file in files) {
+                // Trim project directory from the name
+                var fileSubpath = file;
+                if (fileSubpath.StartsWith (sourceDirectory)) {
+                    fileSubpath = fileSubpath.Substring (sourceDirectory.Length + 1 /* path separator */);
+                }
+
+                var sourcePath = Path.Combine (sourceDirectory, fileSubpath);
+                var destPath = Path.Combine (destDirectory, fileSubpath);
+                var destDir = Path.GetDirectoryName (destPath);
+
+                Log.LogMessage ("Moving {0} {1} to {2}", fileDescription, fileSubpath, destDir);
+                Directory.CreateDirectory (destDir);
+                File.Move (sourcePath, destPath);
+            }
+        }
+
+        private void CopyFiles (string sourceDirectory, string searchPattern, SearchOption searchOption, string destDirectory, string fileDescription)
+        {
+            var files = Directory.GetFiles (sourceDirectory, searchPattern, searchOption);
+            if (files.Length < 1)
+                return;
+
+            foreach (var file in files) {
+                // Trim project directory from the name
+                var fileSubpath = file;
+                if (fileSubpath.StartsWith (sourceDirectory)) {
+                    fileSubpath = fileSubpath.Substring (sourceDirectory.Length + 1 /* path separator */);
+                }
+
+                var sourcePath = Path.Combine (sourceDirectory, fileSubpath);
+                var destPath = Path.Combine (destDirectory, fileSubpath);
+                var destDir = Path.GetDirectoryName (destPath);
+
+                Log.LogMessage ("Copying {0} {1} to {2}", fileDescription, fileSubpath, destDir);
+                Directory.CreateDirectory (destDir);
+                File.Copy (sourcePath, destPath);
+            }
         }
 
         protected override string GenerateCommandLineCommands ()
@@ -73,11 +143,17 @@ namespace BitterFudge.Proguard.Build.Tasks
             }
 
             builder.AppendSwitchIfNotNull ("-injars ", CompiledJavaDirectory);
-            builder.AppendSwitchIfNotNull ("-injars ", LibraryProjects, ":");
-            builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, ":");
+            builder.AppendSwitchIfNotNull ("-outjar ", JavaOutputDirectory);
+            if (AdditionalLibraries != null && AdditionalLibraries.Length > 0) {
+                builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, ":");
+                builder.AppendSwitchIfNotNull ("-outjar ", AdditionalLibrariesOutputDirectory);
+            }
+            if (Directory.Exists (LibraryProjectsTempDirectory)) {
+                builder.AppendSwitchIfNotNull ("-injars ", LibraryProjectsTempDirectory);
+                builder.AppendSwitchIfNotNull ("-outjar ", LibraryProjectsOutputDirectory);
+            }
             builder.AppendSwitchIfNotNull ("-libraryjars ", JavaPlatformJarPath);
             builder.AppendSwitchIfNotNull ("-libraryjars ", monoPlatformJarPath);
-            builder.AppendSwitchIfNotNull ("-outjar ", OutputDirectory);
             builder.AppendSwitchIfNotNull ("-include ", Config);
             if (File.Exists (UserConfig)) {
                 builder.AppendSwitchIfNotNull ("-include ", UserConfig);
