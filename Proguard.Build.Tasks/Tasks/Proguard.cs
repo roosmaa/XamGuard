@@ -86,6 +86,8 @@ namespace BitterFudge.Proguard.Build.Tasks
         {
             if (Directory.Exists (destDirectory))
                 Directory.Delete (destDirectory, true);
+            if (!Directory.Exists (sourceDirectory))
+                return;
 
             var files = Directory.GetFiles (sourceDirectory, searchPattern, searchOption);
             if (files.Length < 1)
@@ -110,6 +112,9 @@ namespace BitterFudge.Proguard.Build.Tasks
 
         private void CopyFiles (string sourceDirectory, string searchPattern, SearchOption searchOption, string destDirectory, string fileDescription)
         {
+            if (!Directory.Exists (sourceDirectory))
+                return;
+
             var files = Directory.GetFiles (sourceDirectory, searchPattern, searchOption);
             if (files.Length < 1)
                 return;
