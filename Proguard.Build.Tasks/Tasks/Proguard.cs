@@ -71,7 +71,7 @@ namespace BitterFudge.Proguard.Build.Tasks
             var tempDirectory = Path.Combine (OutputDirectory, "tmp");
             LibraryProjectsTempDirectory = Path.Combine (tempDirectory, "library_projects");
 
-            MoveFiles (LibraryProjectsDirectory, "*.jar", SearchOption.TopDirectoryOnly, LibraryProjectsTempDirectory, "library project jar");
+            MoveFiles (LibraryProjectsDirectory, "*.jar", SearchOption.AllDirectories, LibraryProjectsTempDirectory, "library project jar");
             GenerateConfiguration ();
             var success = base.Execute ();
 
