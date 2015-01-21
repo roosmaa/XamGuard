@@ -150,7 +150,7 @@ namespace BitterFudge.Proguard.Build.Tasks
             builder.AppendSwitchIfNotNull ("-injars ", CompiledJavaDirectory);
             builder.AppendSwitchIfNotNull ("-outjar ", JavaOutputDirectory);
             if (AdditionalLibraries != null && AdditionalLibraries.Length > 0) {
-                builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, ":");
+                builder.AppendSwitchIfNotNull ("-injars ", AdditionalLibraries, OS.IsWindows ? ";" : ":");
                 builder.AppendSwitchIfNotNull ("-outjar ", AdditionalLibrariesOutputDirectory);
             }
             if (Directory.Exists (LibraryProjectsTempDirectory)) {
