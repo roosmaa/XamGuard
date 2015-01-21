@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/roosmaa/XamGuard</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Run Proguard in Xamarin.Android build process to strip out the unused Java code.</description>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Copyright 2015</copyright>
     <tags>Proguard Xamarin Android</tags>
   </metadata>
   <files>
